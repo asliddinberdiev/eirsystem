@@ -1,0 +1,74 @@
+app:
+  name: "DEMO_SANDBOX_APP"
+  port: 18080
+  host: "127.0.0.1"
+  env: "development" # development, production
+
+  read_timeout: 3s
+  write_timeout: 4s
+  idle_timeout: 45s
+  shutdown_timeout: 7s
+  max_header_bytes: 262144 # 256KB
+
+  telegram_bot_token: "999999999:DEMO_NOT_A_REAL_TOKEN_xxxxxxxxxxxxx"
+  telegram_chat_id: "-1000000000001"
+
+logger:
+  level: "trace"
+  directory: "tmp_logs"
+  filename: "demo.log"
+  max_size: 3
+  max_backups: 2
+  max_age: 5
+  compress: false
+  console: true
+  rotate_daily: false
+
+jwt:
+  secret_key: "DEMO_ONLY__DO_NOT_USE__jwt_secret__change_me__0000"
+  access_expire_minutes: 2m
+  refresh_expire_minutes: 17m
+
+postgres:
+  host: "pg-demo"
+  port: 15432
+  user: "demo_user"
+  password: "DEMO__pg_pass__1234__NOT_REAL"
+  dbname: "demo_db_x"
+  sslmode: "disable"
+  timezone: "Etc/UTC"
+
+  max_open_conns: 7
+  max_idle_conns: 2
+  conn_max_lifetime: 4m
+  conn_max_idle_time: 20s
+
+redis:
+  host: "redis-demo"
+  port: 16379
+  password: "DEMO__redis_pass__NOT_REAL__0000"
+  db: 9
+
+  pool_size: 11
+  min_idle_conns: 1
+  max_retries: 1
+  min_retry_backoff: 20ms
+  max_retry_backoff: 60ms
+  read_timeout: 800ms
+  write_timeout: 900ms
+  dial_timeout: 700ms
+
+minio:
+  host: "minio-demo"
+  root_user: "demo_root"
+  root_password: "DEMO__minio_pass__NOT_REAL__4321"
+  api_port: 19000
+  console_port: 19001
+  buckets:
+    - name: "demo_public_a"
+      public: true
+    - name: "demo_public_b"
+      public: true
+    - name: "demo_private_x"
+      public: false
+  use_ssl: false
