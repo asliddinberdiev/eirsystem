@@ -3,7 +3,6 @@ package v1
 
 import (
 	"github.com/asliddinberdiev/eirsystem/pkg/codes"
-	"github.com/asliddinberdiev/eirsystem/pkg/logger"
 	"github.com/asliddinberdiev/eirsystem/pkg/response"
 	"github.com/gin-gonic/gin"
 )
@@ -23,8 +22,6 @@ func (h *Handler) GetAll(c *gin.Context) {
 		response.Error(c, h.log, codes.InternalError, err)
 		return
 	}
-
-	h.log.Info("Users", logger.Int("count", len(users)))
 
 	response.Success(c, codes.Ok, users)
 }
