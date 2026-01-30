@@ -1,3 +1,4 @@
+// Package http - HTTP delivery layer
 package http
 
 import (
@@ -7,17 +8,16 @@ import (
 	"github.com/asliddinberdiev/eirsystem/pkg/logger"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 type Handler struct {
-	db  *gorm.DB
+	cfg *config.Config
 	log logger.Logger
 }
 
-func NewHandler(db *gorm.DB, log logger.Logger) *Handler {
+func NewHandler(cfg *config.Config, log logger.Logger) *Handler {
 	return &Handler{
-		db:  db,
+		cfg: cfg,
 		log: log,
 	}
 }
@@ -28,7 +28,7 @@ func (h *Handler) InitRouter(cfg *config.App) *gin.Engine {
 	}
 
 	router := gin.New()
-	
+
 	router.Use(middleware.RequestID())
 	router.Use(gin.Recovery())
 	router.Use(logger.GinLogger(h.log))
@@ -47,7 +47,7 @@ func (h *Handler) InitRouter(cfg *config.App) *gin.Engine {
 }
 
 func (h *Handler) initAPI(router *gin.Engine) {
-	handlerV1 := v1.NewHandler(h.db, h.log)
+	handlerV1 := v1.NewHandler(h.cfg, h.log)
 
 	api := router.Group("/api")
 	{

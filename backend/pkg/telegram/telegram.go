@@ -1,3 +1,4 @@
+// Package telegram - Telegram wrapper
 package telegram
 
 import (
@@ -55,6 +56,7 @@ func Send(msg string) {
 
 	defer func() {
 		if recover() != nil {
+			globalBot.log.Error("Telegram send failed")
 		}
 	}()
 

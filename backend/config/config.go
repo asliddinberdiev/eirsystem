@@ -1,3 +1,4 @@
+// Package config - Configuration management
 package config
 
 import (
@@ -23,8 +24,13 @@ type App struct {
 	Port             int    `mapstructure:"port"`
 	Host             string `mapstructure:"host"`
 	Env              string `mapstructure:"env"`
+
 	TelegramBotToken string `mapstructure:"telegram_bot_token"`
 	TelegramChatID   string `mapstructure:"telegram_chat_id"`
+
+	DocsUsername string `mapstructure:"docs_username"`
+	DocsPassword string `mapstructure:"docs_password"`
+	
 
 	ReadTimeout     time.Duration `mapstructure:"read_timeout"`
 	WriteTimeout    time.Duration `mapstructure:"write_timeout"`

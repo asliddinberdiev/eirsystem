@@ -1,3 +1,4 @@
+// Package logger - Logger adapter for Gin
 package logger
 
 import (

@@ -1,3 +1,4 @@
+// Package response - Response wrapper
 package response
 
 import (

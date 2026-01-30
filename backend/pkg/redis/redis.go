@@ -1,3 +1,4 @@
+// Package redis - Redis wrapper
 package redis
 
 import (

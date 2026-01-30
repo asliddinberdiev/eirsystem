@@ -1,3 +1,4 @@
+// Package server - Server layer
 package server
 
 import (

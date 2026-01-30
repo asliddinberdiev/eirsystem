@@ -1,3 +1,4 @@
+// Package minio - MinIO client wrapper
 package minio
 
 import (

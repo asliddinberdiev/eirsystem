@@ -1,3 +1,4 @@
+// Package postgres - PostgreSQL wrapper
 package postgres
 
 import (
@@ -13,8 +14,8 @@ import (
 
 func New(cfg *config.Postgres, isDev bool, log logger.Logger) (*gorm.DB, error) {
 	adapter := logger.NewGormAdapter(log, 200*time.Millisecond)
+	mode := gormLog.Error
 
-	var mode gormLog.LogLevel = gormLog.Error
 	if isDev {
 		mode = gormLog.Info
 	}

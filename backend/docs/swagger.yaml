@@ -1,0 +1,43 @@
+basePath: /api/v1
+definitions:
+  response.Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      error: {}
+      message:
+        type: string
+      request_id:
+        type: string
+      success:
+        type: boolean
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: Asliddin Berdiev
+    url: https://github.com/asliddinberdiev
+  title: EIR System API
+  version: v1
+paths:
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Fetch list of users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get users
+      tags:
+      - users
+swagger: "2.0"

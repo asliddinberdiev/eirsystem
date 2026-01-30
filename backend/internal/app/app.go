@@ -1,3 +1,4 @@
+// Package app - Application entry point
 package app
 
 import (
@@ -43,12 +44,11 @@ func New() {
 		}
 	}()
 
-
 	gormPsql, err := postgres.New(&cfg.Postgres, cfg.App.IsDev(), log.Named("GORM"))
 	if err != nil {
 		failOnError("Postgres connection failed", err)
 	}
-	
+
 	sqlDB, err := gormPsql.DB()
 	if err != nil {
 		failOnError("Postgres sql.DB retrieval failed", err)
@@ -69,7 +69,7 @@ func New() {
 	}
 	appLog.Info("Connected to minio")
 
-	h := httpDelivery.NewHandler(gormPsql, log.Named("HTTP"))
+	h := httpDelivery.NewHandler(cfg, log.Named("HTTP"))
 	srv := server.New(&cfg.App, log.Named("SERVER"), h.InitRouter(&cfg.App))
 
 	if err := srv.Run(); err != nil {

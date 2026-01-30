@@ -1,3 +1,4 @@
+// Package codes - Response codes
 package codes
 
 import "net/http"
