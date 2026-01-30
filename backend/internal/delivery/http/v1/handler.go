@@ -4,6 +4,7 @@ package v1
 import (
 	"github.com/asliddinberdiev/eirsystem/config"
 	_ "github.com/asliddinberdiev/eirsystem/docs"
+	"github.com/asliddinberdiev/eirsystem/internal/service"
 	"github.com/asliddinberdiev/eirsystem/pkg/logger"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
@@ -14,6 +15,7 @@ import (
 type Handler struct {
 	cfg *config.Config
 	log logger.Logger
+	svc *service.Service
 }
 
 // @title EIR System API
@@ -25,10 +27,11 @@ type Handler struct {
 // @host localhost:8080
 // @BasePath /api/v1
 
-func NewHandler(cfg *config.Config, log logger.Logger) *Handler {
+func NewHandler(cfg *config.Config, log logger.Logger, svc *service.Service) *Handler {
 	return &Handler{
 		cfg: cfg,
 		log: log,
+		svc: svc,
 	}
 }
 
@@ -51,6 +54,6 @@ func (h *Handler) Init(api *gin.RouterGroup) {
 func (h *Handler) initUserRoutes(api *gin.RouterGroup) {
 	users := api.Group("/users")
 	{
-		users.GET("", h.GetUsers)
+		users.GET("", h.GetAll)
 	}
 }

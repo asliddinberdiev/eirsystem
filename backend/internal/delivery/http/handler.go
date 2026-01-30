@@ -5,6 +5,7 @@ import (
 	"github.com/asliddinberdiev/eirsystem/config"
 	"github.com/asliddinberdiev/eirsystem/internal/delivery/http/middleware"
 	v1 "github.com/asliddinberdiev/eirsystem/internal/delivery/http/v1"
+	"github.com/asliddinberdiev/eirsystem/internal/service"
 	"github.com/asliddinberdiev/eirsystem/pkg/logger"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -13,12 +14,14 @@ import (
 type Handler struct {
 	cfg *config.Config
 	log logger.Logger
+	svc *service.Service
 }
 
-func NewHandler(cfg *config.Config, log logger.Logger) *Handler {
+func New(cfg *config.Config, log logger.Logger, svc *service.Service) *Handler {
 	return &Handler{
 		cfg: cfg,
 		log: log,
+		svc: svc,
 	}
 }
 
@@ -34,20 +37,13 @@ func (h *Handler) InitRouter(cfg *config.App) *gin.Engine {
 	router.Use(logger.GinLogger(h.log))
 	router.Use(cors.Default())
 
-	router.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"status":  "ok",
-			"message": "pong",
-		})
-	})
-
 	h.initAPI(router)
 
 	return router
 }
 
 func (h *Handler) initAPI(router *gin.Engine) {
-	handlerV1 := v1.NewHandler(h.cfg, h.log)
+	handlerV1 := v1.NewHandler(h.cfg, h.log, h.svc)
 
 	api := router.Group("/api")
 	{

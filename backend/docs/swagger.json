@@ -24,17 +24,17 @@
                     "users"
                 ],
                 "summary": "Get users",
-                "responses": {
+                "": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/Response"
                         }
                     }
                 }
@@ -42,7 +42,7 @@
         }
     },
     "definitions": {
-        "response.Response": {
+        "Response": {
             "type": "object",
             "properties": {
                 "code": {

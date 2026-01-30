@@ -1,6 +1,6 @@
 basePath: /api/v1
 definitions:
-  response.Response:
+  Response:
     properties:
       code:
         type: integer
@@ -28,15 +28,15 @@ paths:
       description: Fetch list of users
       produces:
       - application/json
-      responses:
+      :
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/Response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/Response'
       summary: Get users
       tags:
       - users

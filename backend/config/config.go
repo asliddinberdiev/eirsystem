@@ -30,7 +30,6 @@ type App struct {
 
 	DocsUsername string `mapstructure:"docs_username"`
 	DocsPassword string `mapstructure:"docs_password"`
-	
 
 	ReadTimeout     time.Duration `mapstructure:"read_timeout"`
 	WriteTimeout    time.Duration `mapstructure:"write_timeout"`

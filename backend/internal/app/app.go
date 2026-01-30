@@ -6,7 +6,9 @@ import (
 
 	"github.com/asliddinberdiev/eirsystem/config"
 	httpDelivery "github.com/asliddinberdiev/eirsystem/internal/delivery/http"
+	"github.com/asliddinberdiev/eirsystem/internal/repository"
 	"github.com/asliddinberdiev/eirsystem/internal/server"
+	"github.com/asliddinberdiev/eirsystem/internal/service"
 	"github.com/asliddinberdiev/eirsystem/pkg/logger"
 	"github.com/asliddinberdiev/eirsystem/pkg/minio"
 	"github.com/asliddinberdiev/eirsystem/pkg/postgres"
@@ -56,6 +58,11 @@ func New() {
 	defer sqlDB.Close()
 	appLog.Info("Connected to postgres")
 
+	if err := postgres.RunMigrations(sqlDB, "./migrations"); err != nil {
+		failOnError("Database migration failed", err)
+	}
+	appLog.Info("Database migrations applied")
+
 	redisClient, err := redis.New(&cfg.Redis)
 	if err != nil {
 		failOnError("Redis connection failed", err)
@@ -63,13 +70,16 @@ func New() {
 	defer redisClient.Close()
 	appLog.Info("Connected to redis")
 
-	_, err = minio.New(&cfg.Minio, cfg.App.IsDev(), log.Named("MINIO"))
+	minioClient, err := minio.New(&cfg.Minio, cfg.App.IsDev(), log.Named("MINIO"))
 	if err != nil {
 		failOnError("Minio connection failed", err)
 	}
 	appLog.Info("Connected to minio")
 
-	h := httpDelivery.NewHandler(cfg, log.Named("HTTP"))
+	repository := repository.New(cfg, log.Named("REPOSITORY"), gormPsql, redisClient)
+	service := service.New(cfg, log.Named("SERVICE"), minioClient, repository)
+
+	h := httpDelivery.New(cfg, log.Named("HTTP"), service)
 	srv := server.New(&cfg.App, log.Named("SERVER"), h.InitRouter(&cfg.App))
 
 	if err := srv.Run(); err != nil {

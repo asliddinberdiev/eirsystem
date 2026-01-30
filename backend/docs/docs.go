@@ -31,17 +31,17 @@ const docTemplate = `{
                     "users"
                 ],
                 "summary": "Get users",
-                "responses": {
+                "": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/Response"
                         }
                     }
                 }
@@ -49,7 +49,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "response.Response": {
+        "Response": {
             "type": "object",
             "properties": {
                 "code": {
