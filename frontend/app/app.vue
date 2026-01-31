@@ -6,9 +6,9 @@ const error = ref<string | null>(null)
 
 onMounted(async () => {
   try {
-    const response = await fetch('http://localhost:8080/health')
+    const response = await fetch('http://localhost:8080/api/v1/users')
     if (!response.ok) throw new Error('Network response was not ok')
-    
+
     data.value = await response.json()
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'An error occurred'

@@ -7,9 +7,10 @@ type Code int
 
 const (
 	// SYSTEM -> 0 - 999
-	Ok       Code = 200
-	InternalError Code = 500
-	InvalidParams Code = 400
+	Ok              Code = 200
+	InternalError   Code = 500
+	InvalidParams   Code = 400
+	TooManyRequests Code = 429
 
 	// USER -> 1000 - 1999
 	UserNotFound      Code = 1001
@@ -27,6 +28,8 @@ func (c Code) HTTPStatus() int {
 	switch c {
 	case Ok:
 		return http.StatusOK
+	case TooManyRequests:
+		return http.StatusTooManyRequests
 	case InternalError:
 		return http.StatusInternalServerError
 	case InvalidParams, UserAlreadyExists, UserPasswordWrong:
@@ -45,6 +48,8 @@ func (c Code) String() string {
 	// SYSTEM
 	case Ok:
 		return "Operation successful"
+	case TooManyRequests:
+		return "Too many requests. Please try again later."
 	case InternalError:
 		return "Internal server error"
 	case InvalidParams:

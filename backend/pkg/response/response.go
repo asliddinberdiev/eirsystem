@@ -39,12 +39,15 @@ func Error(c *gin.Context, log logger.Logger, code codes.Code, err error) {
 	var technicalError any
 	if err != nil {
 		technicalError = err.Error()
-		log.Error(
-			code.String(),
-			logger.String("request_id", reqID),
-			logger.Int("code", int(code)),
-			logger.Error(err),
-		)
+
+		if status != codes.TooManyRequests.HTTPStatus() {
+			log.Error(
+				code.String(),
+				logger.String("request_id", reqID),
+				logger.Int("code", int(code)),
+				logger.Error(err),
+			)
+		}
 
 		if status >= 500 {
 			msg := fmt.Sprintf(

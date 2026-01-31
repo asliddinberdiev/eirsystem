@@ -79,8 +79,8 @@ func New() {
 	repository := repository.New(cfg, log.Named("REPOSITORY"), gormPsql, redisClient)
 	service := service.New(cfg, log.Named("SERVICE"), minioClient, repository)
 
-	h := httpDelivery.New(cfg, log.Named("HTTP"), service)
-	srv := server.New(&cfg.App, log.Named("SERVER"), h.InitRouter(&cfg.App))
+	h := httpDelivery.New(cfg, log.Named("HTTP"), redisClient.Client, service)
+	srv := server.New(&cfg.App, log.Named("SERVER"), h.InitRouter())
 
 	if err := srv.Run(); err != nil {
 		failOnError("Server forced to shutdown", err)

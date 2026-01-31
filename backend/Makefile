@@ -5,22 +5,19 @@ run:
 
 docs:
 	swag init -g ./internal/delivery/http/v1/handler.go -o ./docs
-	./scripts/clean_docs.sh	
+	./scripts/clean_docs.sh 
 
-# Migration commands
-# Usage: make migrate-create name=create_users_table
 migrate-create:
-	@if [ -z "$(name)" ]; then echo "Error: name is required. Usage: make migrate-create name=migration_name"; exit 1; fi
-	goose -dir ./migrations create $(name) sql
+	goose -s -dir ./migrations create $(name) sql
 
 migrate-up:
-	@. ./.env && goose -dir ./migrations postgres "host=$$POSTGRES_HOST user=$$POSTGRES_USER password=$$POSTGRES_PASSWORD dbname=$$POSTGRES_DBNAME port=$$POSTGRES_PORT sslmode=$$POSTGRES_SSLMODE" up
+	@. ./.env && goose -dir ./migrations postgres "$(dsn)" up
 
 migrate-down:
-	@. ./.env && goose -dir ./migrations postgres "host=$$POSTGRES_HOST user=$$POSTGRES_USER password=$$POSTGRES_PASSWORD dbname=$$POSTGRES_DBNAME port=$$POSTGRES_PORT sslmode=$$POSTGRES_SSLMODE" down
+	@. ./.env && goose -dir ./migrations postgres "$(dsn)" down
 
 migrate-status:
-	@. ./.env && goose -dir ./migrations postgres "host=$$POSTGRES_HOST user=$$POSTGRES_USER password=$$POSTGRES_PASSWORD dbname=$$POSTGRES_DBNAME port=$$POSTGRES_PORT sslmode=$$POSTGRES_SSLMODE" status
+	@. ./.env && goose -dir ./migrations postgres "$(dsn)" status
 
 migrate-reset:
-	@. ./.env && goose -dir ./migrations postgres "host=$$POSTGRES_HOST user=$$POSTGRES_USER password=$$POSTGRES_PASSWORD dbname=$$POSTGRES_DBNAME port=$$POSTGRES_PORT sslmode=$$POSTGRES_SSLMODE" reset
+	@. ./.env && goose -dir ./migrations postgres "$(dsn)" reset

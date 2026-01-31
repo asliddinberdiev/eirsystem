@@ -9,33 +9,37 @@ import (
 	"github.com/asliddinberdiev/eirsystem/pkg/logger"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 )
 
 type Handler struct {
-	cfg *config.Config
-	log logger.Logger
-	svc *service.Service
+	cfg         *config.Config
+	log         logger.Logger
+	redisClient *redis.Client
+	svc         *service.Service
 }
 
-func New(cfg *config.Config, log logger.Logger, svc *service.Service) *Handler {
+func New(cfg *config.Config, log logger.Logger, redisClient *redis.Client, svc *service.Service) *Handler {
 	return &Handler{
-		cfg: cfg,
-		log: log,
-		svc: svc,
+		cfg:         cfg,
+		log:         log,
+		redisClient: redisClient,
+		svc:         svc,
 	}
 }
 
-func (h *Handler) InitRouter(cfg *config.App) *gin.Engine {
-	if !cfg.IsDev() {
+func (h *Handler) InitRouter() *gin.Engine {
+	if !h.cfg.App.IsDev() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
 	router := gin.New()
 
+	router.Use(cors.Default())
 	router.Use(middleware.RequestID())
 	router.Use(gin.Recovery())
 	router.Use(logger.GinLogger(h.log))
-	router.Use(cors.Default())
+	router.Use(middleware.NewRateLimiter(h.log, h.redisClient, "1-S", "app"))
 
 	h.initAPI(router)
 
