@@ -13,7 +13,7 @@ import (
 // @Tags users
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} response.Response
+// @Response 200 {object} response.Response
 // @Failure 500 {object} response.Response
 // @Router /users [get]
 func (h *Handler) GetAll(c *gin.Context) {

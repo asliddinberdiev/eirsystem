@@ -39,7 +39,7 @@ func (h *Handler) InitRouter() *gin.Engine {
 	router.Use(middleware.RequestID())
 	router.Use(gin.Recovery())
 	router.Use(logger.GinLogger(h.log))
-	router.Use(middleware.NewRateLimiter(h.log, h.redisClient, "1-S", "app"))
+	router.Use(middleware.NewRateLimiter(h.log, h.redisClient, "120-S", "app"))
 
 	h.initAPI(router)
 

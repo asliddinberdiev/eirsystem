@@ -7,7 +7,7 @@ cd ./docs
 for file in *; do
     if [ -f "$file" ]; then
         sed -i 's/github_com_asliddinberdiev_eirsystem_internal_domain.//g' "$file"
-        sed -i 's/response.//g' "$file"
+        sed -i 's/github_com_asliddinberdiev_eirsystem_pkg_response.//g' "$file"
     fi
 done
 

@@ -31,7 +31,7 @@ const docTemplate = `{
                     "users"
                 ],
                 "summary": "Get users",
-                "": {
+                "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {

@@ -28,7 +28,7 @@ paths:
       description: Fetch list of users
       produces:
       - application/json
-      :
+      responses:
         "200":
           description: OK
           schema:

@@ -4,8 +4,8 @@ run:
 	go run cmd/app/main.go
 
 docs:
-	swag init -g ./internal/delivery/http/v1/handler.go -o ./docs
-	./scripts/clean_docs.sh 
+	swag init -g internal/delivery/http/v1/handler.go --parseDependency --parseInternal --parseDepth 1 -o ./docs
+	./scripts/clean_docs.sh
 
 migrate-create:
 	goose -s -dir ./migrations create $(name) sql
