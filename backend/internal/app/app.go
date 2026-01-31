@@ -13,6 +13,7 @@ import (
 	"github.com/asliddinberdiev/eirsystem/pkg/minio"
 	"github.com/asliddinberdiev/eirsystem/pkg/postgres"
 	"github.com/asliddinberdiev/eirsystem/pkg/redis"
+	"github.com/asliddinberdiev/eirsystem/pkg/seed"
 	"github.com/asliddinberdiev/eirsystem/pkg/telegram"
 )
 
@@ -62,6 +63,10 @@ func New() {
 		failOnError("Database migration failed", err)
 	}
 	appLog.Info("Database migrations applied")
+
+	if err := seed.SeedSuperAdmin(log.Named("SEED"), gormPsql, cfg.SeedSuperAdmin); err != nil {
+		failOnError("Super Admin seeding failed", err)
+	}
 
 	redisClient, err := redis.New(&cfg.Redis)
 	if err != nil {

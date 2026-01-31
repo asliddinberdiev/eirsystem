@@ -17,7 +17,10 @@ import (
 // @Failure 500 {object} response.Response
 // @Router /users [get]
 func (h *Handler) GetAll(c *gin.Context) {
-	users := []string{"user1", "user2", "user3"}
-
+	users, err := h.svc.User.GetAll()
+	if err != nil {
+		response.Error(c, h.log, codes.InternalError, err)
+		return
+	}
 	response.Success(c, codes.Ok, users)
 }

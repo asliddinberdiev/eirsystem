@@ -11,19 +11,20 @@ import (
 )
 
 type Config struct {
-	App      App      `mapstructure:"app"`
-	Logger   Logger   `mapstructure:"logger"`
-	JWT      JWT      `mapstructure:"jwt"`
-	Postgres Postgres `mapstructure:"postgres"`
-	Redis    Redis    `mapstructure:"redis"`
-	Minio    Minio    `mapstructure:"minio"`
+	App            App            `mapstructure:"app"`
+	SeedSuperAdmin SeedSuperAdmin `mapstructure:"seed_super_admin"`
+	Logger         Logger         `mapstructure:"logger"`
+	JWT            JWT            `mapstructure:"jwt"`
+	Postgres       Postgres       `mapstructure:"postgres"`
+	Redis          Redis          `mapstructure:"redis"`
+	Minio          Minio          `mapstructure:"minio"`
 }
 
 type App struct {
-	Name             string `mapstructure:"name"`
-	Port             int    `mapstructure:"port"`
-	Host             string `mapstructure:"host"`
-	Env              string `mapstructure:"env"`
+	Name string `mapstructure:"name"`
+	Port int    `mapstructure:"port"`
+	Host string `mapstructure:"host"`
+	Env  string `mapstructure:"env"`
 
 	TelegramBotToken string `mapstructure:"telegram_bot_token"`
 	TelegramChatID   string `mapstructure:"telegram_chat_id"`
@@ -44,6 +45,13 @@ func (a *App) GetDSN() string {
 
 func (a *App) IsDev() bool {
 	return a.Env == "development"
+}
+
+type SeedSuperAdmin struct {
+	FullName string `mapstructure:"full_name"`
+	Username string `mapstructure:"username"`
+	Password string `mapstructure:"password"`
+	Phone    string `mapstructure:"phone"`
 }
 
 type Logger struct {
