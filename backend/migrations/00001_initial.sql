@@ -4,7 +4,7 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 DO $$ BEGIN
-    CREATE TYPE user_role AS ENUM ('super_admin', 'tenant_owner', 'admin', 'doctor', 'nurse', 'technician', 'reception');
+    CREATE TYPE user_role AS ENUM ('system', 'owner', 'admin', 'doctor', 'nurse', 'technician', 'reception');
     CREATE TYPE appt_status AS ENUM ('scheduled', 'waiting', 'in_progress', 'completed', 'cancelled');
     CREATE TYPE pay_method AS ENUM ('cash', 'card', 'click', 'payme', 'debt');
     CREATE TYPE lab_status AS ENUM ('ordered', 'received', 'in_process', 'ready', 'delivered');

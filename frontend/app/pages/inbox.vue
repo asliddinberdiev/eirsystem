@@ -12,7 +12,15 @@ const tabItems = [{
 }]
 const selectedTab = ref('all')
 
-const { data: mails } = await useFetch<Mail[]>('/api/mails', { default: () => [] })
+// Use Pinia store instead of useFetch
+const mailStore = useMailStore()
+const { mails } = storeToRefs(mailStore)
+
+// Fetch mails on component mount
+onMounted(async () => {
+  await mailStore.fetchMails()
+})
+
 
 // Filter mails based on the selected tab
 const filteredMails = computed(() => {
@@ -48,13 +56,7 @@ const isMobile = breakpoints.smaller('lg')
 </script>
 
 <template>
-  <UDashboardPanel
-    id="inbox-1"
-    :default-size="25"
-    :min-size="20"
-    :max-size="30"
-    resizable
-  >
+  <UDashboardPanel id="inbox-1" :default-size="25" :min-size="20" :max-size="30" resizable>
     <UDashboardNavbar title="Inbox">
       <template #leading>
         <UDashboardSidebarCollapse />
@@ -64,12 +66,7 @@ const isMobile = breakpoints.smaller('lg')
       </template>
 
       <template #right>
-        <UTabs
-          v-model="selectedTab"
-          :items="tabItems"
-          :content="false"
-          size="xs"
-        />
+        <UTabs v-model="selectedTab" :items="tabItems" :content="false" size="xs" />
       </template>
     </UDashboardNavbar>
     <InboxList v-model="selectedMail" :mails="filteredMails" />

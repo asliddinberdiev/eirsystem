@@ -6,8 +6,8 @@ defineProps<{
 }>()
 
 const roles = ref([
-  { label: 'Super Admin' },
-  { label: 'Tenant Owner' },
+  { label: 'System' },
+  { label: 'Owner' },
   { label: 'Admin' },
   { label: 'Doctor' },
   { label: 'Nurse' },
