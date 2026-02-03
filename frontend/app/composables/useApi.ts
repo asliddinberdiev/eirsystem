@@ -1,7 +1,6 @@
 import axios from "axios";
 import type { InternalAxiosRequestConfig, AxiosError } from "axios";
 
-// Mutex for token refresh
 let isRefreshing = false;
 let failedQueue: Array<{
   resolve: (token: string) => void;
@@ -30,7 +29,6 @@ export const useApi = () => {
     },
   });
 
-  // Request Interceptor
   api.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
       const token = authStore.accessToken;
@@ -44,7 +42,6 @@ export const useApi = () => {
     },
   );
 
-  // Response Interceptor
   api.interceptors.response.use(
     (response) => response,
     async (error: AxiosError) => {
@@ -70,20 +67,10 @@ export const useApi = () => {
         isRefreshing = true;
 
         try {
-          // Attempt to refresh token
-          // Note: We avoid using 'api' instance here to prevent infinite loops if the refresh fails with 401 again
-          // unless the endpoint is public? Usually refresh endpoint is accessible with refresh token.
-          // We assume authStore.refreshToken is available.
-
           if (!authStore.refreshToken) {
             throw new Error("No refresh token available");
           }
 
-          /* 
-             Using a fresh axios call for refresh to avoid interceptor issues, 
-             or we could use the same instance if we ensure the refresh URL is excluded from the 401 check,
-             but safely we use a raw call or helper.
-          */
           const response = await axios.post(
             `${config.public.apiBase}/auth/refresh`,
             {
@@ -93,13 +80,10 @@ export const useApi = () => {
 
           const { access_token, refresh_token } = response.data;
 
-          // Update store
           authStore.setTokens(access_token, refresh_token);
 
-          // Process queued requests
           processQueue(null, access_token);
 
-          // Retry original request
           originalRequest.headers.Authorization = `Bearer ${access_token}`;
           return api(originalRequest);
         } catch (err) {

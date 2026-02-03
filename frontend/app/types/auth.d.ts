@@ -5,14 +5,14 @@
 
 export interface IUser {
   id: string;
-  email: string;
+  username: string;
   name: string;
   role?: string;
   avatar?: string;
 }
 
 export interface ILoginCredentials {
-  email: string;
+  username: string;
   password: string;
 }
 
