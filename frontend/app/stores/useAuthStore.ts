@@ -37,12 +37,11 @@ export const useAuthStore = defineStore("auth", () => {
   ): Promise<Response<ISignInResponse>> {
     const config = useRuntimeConfig();
     try {
-      const response = await api.post<ISignInResponse>(
+      const response = await api.post<Response<ISignInResponse>>(
         `${config.public.apiBase}/auth/sign-in`,
         credentials,
       );
 
-      console.log("[AuthStore] Sign in response:", response.data);
       const {
         access_token,
         refresh_token,

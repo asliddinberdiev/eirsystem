@@ -3,5 +3,6 @@ export interface Response<T> {
   code: number;
   message: string;
   data: T;
+  error?: any;
   request_id: string;
 }

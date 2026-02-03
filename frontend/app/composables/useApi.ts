@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { InternalAxiosRequestConfig, AxiosError } from "axios";
+import type { InternalAxiosRequestConfig, AxiosError, AxiosInstance } from "axios";
 import type { Response } from "@/types/api";
 
 let isRefreshing = false;
@@ -19,7 +19,7 @@ const processQueue = (error: any, token: string | null = null) => {
   failedQueue = [];
 };
 
-export const useApi = () => {
+export const useApi = (): AxiosInstance => {
   const config = useRuntimeConfig();
   const authStore = useAuthStore();
 
@@ -101,5 +101,5 @@ export const useApi = () => {
     },
   );
 
-  return api<Response<T>>;
+  return api;
 };
