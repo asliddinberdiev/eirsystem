@@ -1,6 +1,12 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ["@nuxt/eslint", "@nuxt/ui", "@vueuse/nuxt", "@pinia/nuxt"],
+  modules: [
+    "@nuxt/eslint",
+    "@nuxt/ui",
+    "@vueuse/nuxt",
+    "@pinia/nuxt",
+    "@pinia-plugin-persistedstate/nuxt",
+  ],
 
   devtools: {
     enabled: true,
@@ -15,6 +21,13 @@ export default defineNuxtConfig({
   },
 
   compatibilityDate: "2024-07-11",
+
+  runtimeConfig: {
+    public: {
+      apiBase:
+        process.env.NUXT_PUBLIC_API_BASE || "http://localhost:8080/api/v1",
+    },
+  },
 
   eslint: {
     config: {
