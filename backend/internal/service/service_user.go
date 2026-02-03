@@ -2,14 +2,15 @@ package service
 
 import (
 	"github.com/asliddinberdiev/eirsystem/config"
-	"github.com/asliddinberdiev/eirsystem/internal/domain"
+	"github.com/asliddinberdiev/eirsystem/internal/model"
 	"github.com/asliddinberdiev/eirsystem/internal/repository"
 	"github.com/asliddinberdiev/eirsystem/pkg/logger"
 	"github.com/asliddinberdiev/eirsystem/pkg/minio"
 )
 
 type User interface {
-	GetAll() ([]domain.User, error)
+	GetAll() ([]model.User, error)
+	GetByUsername(username string) (model.User, error)
 }
 
 type userServ struct {
@@ -28,6 +29,10 @@ func NewUserService(cfg *config.Config, logger logger.Logger, s3 *minio.Client, 
 	}
 }
 
-func (s *userServ) GetAll() ([]domain.User, error) {
+func (s *userServ) GetAll() ([]model.User, error) {
 	return s.repo.User.GetAll()
+}
+
+func (s *userServ) GetByUsername(username string) (model.User, error) {
+	return s.repo.User.GetByUsername(username)
 }

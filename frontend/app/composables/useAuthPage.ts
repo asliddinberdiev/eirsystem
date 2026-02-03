@@ -24,8 +24,9 @@ export const useAuthPage = () => {
 
   async function onSubmit(event: FormSubmitEvent<Schema>) {
     try {
-      await authStore.login(event.data);
+      await authStore.signIn(event.data);
       successToast("Kirish muvaffaqiyatli amalga oshirildi", "");
+      navigateTo("/");
     } catch (error) {
       errorToast("Kirishda xatolik", "Username yoki password noto'g'ri");
     }

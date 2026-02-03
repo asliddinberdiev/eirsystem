@@ -1,5 +1,6 @@
 import axios from "axios";
 import type { InternalAxiosRequestConfig, AxiosError } from "axios";
+import type { Response } from "@/types/api";
 
 let isRefreshing = false;
 let failedQueue: Array<{
@@ -100,5 +101,5 @@ export const useApi = () => {
     },
   );
 
-  return api;
+  return api<Response<T>>;
 };

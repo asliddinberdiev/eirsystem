@@ -7,6 +7,7 @@ import (
 	v1 "github.com/asliddinberdiev/eirsystem/internal/delivery/http/v1"
 	"github.com/asliddinberdiev/eirsystem/internal/service"
 	"github.com/asliddinberdiev/eirsystem/pkg/logger"
+	"github.com/asliddinberdiev/eirsystem/pkg/validator"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
@@ -15,6 +16,7 @@ import (
 type Handler struct {
 	cfg         *config.Config
 	log         logger.Logger
+	valid       validator.Validator
 	redisClient *redis.Client
 	svc         *service.Service
 }
@@ -23,6 +25,7 @@ func New(cfg *config.Config, log logger.Logger, redisClient *redis.Client, svc *
 	return &Handler{
 		cfg:         cfg,
 		log:         log,
+		valid:       validator.New(),
 		redisClient: redisClient,
 		svc:         svc,
 	}
@@ -47,7 +50,7 @@ func (h *Handler) InitRouter() *gin.Engine {
 }
 
 func (h *Handler) initAPI(router *gin.Engine) {
-	handlerV1 := v1.NewHandler(h.cfg, h.log, h.svc)
+	handlerV1 := v1.NewHandler(h.cfg, h.log, h.valid, h.svc)
 
 	api := router.Group("/api")
 	{

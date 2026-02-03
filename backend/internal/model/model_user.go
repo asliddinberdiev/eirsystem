@@ -1,5 +1,5 @@
-// Package domain - Domain layer
-package domain
+// Package model - Model layer
+package model
 
 import "time"
 

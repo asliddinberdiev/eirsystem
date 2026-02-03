@@ -6,6 +6,7 @@ import (
 	_ "github.com/asliddinberdiev/eirsystem/docs"
 	"github.com/asliddinberdiev/eirsystem/internal/service"
 	"github.com/asliddinberdiev/eirsystem/pkg/logger"
+	"github.com/asliddinberdiev/eirsystem/pkg/validator"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -13,9 +14,10 @@ import (
 )
 
 type Handler struct {
-	cfg *config.Config
-	log logger.Logger
-	svc *service.Service
+	cfg   *config.Config
+	log   logger.Logger
+	valid validator.Validator
+	svc   *service.Service
 }
 
 // @title EIR System API
@@ -27,11 +29,12 @@ type Handler struct {
 // @host localhost:8080
 // @BasePath /api/v1
 
-func NewHandler(cfg *config.Config, log logger.Logger, svc *service.Service) *Handler {
+func NewHandler(cfg *config.Config, log logger.Logger, valid validator.Validator, svc *service.Service) *Handler {
 	return &Handler{
-		cfg: cfg,
-		log: log,
-		svc: svc,
+		cfg:   cfg,
+		log:   log,
+		valid: valid,
+		svc:   svc,
 	}
 }
 
@@ -47,13 +50,7 @@ func (h *Handler) Init(api *gin.RouterGroup) {
 	}
 
 	{
+		h.initAuthRoutes(v1)
 		h.initUserRoutes(v1)
-	}
-}
-
-func (h *Handler) initUserRoutes(api *gin.RouterGroup) {
-	users := api.Group("/users")
-	{
-		users.GET("", h.GetAll)
 	}
 }

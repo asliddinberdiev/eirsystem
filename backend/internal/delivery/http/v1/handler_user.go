@@ -7,6 +7,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func (h *Handler) initUserRoutes(api *gin.RouterGroup) {
+	users := api.Group("/users")
+	{
+		users.GET("", h.GetAll)
+	}
+}
+
 // GetAll godoc
 // @Summary Get users
 // @Description Fetch list of users

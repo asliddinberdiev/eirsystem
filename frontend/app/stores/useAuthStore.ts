@@ -2,12 +2,14 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import type {
   IUser,
-  ILoginCredentials,
-  IAuthResponse,
+  ISignInCredentials,
+  ISignInResponse,
   IRefreshResponse,
 } from "@/types/auth";
+import type { Response } from "@/types/api";
 
 export const useAuthStore = defineStore("auth", () => {
+  const api = useApi();
   const user = ref<IUser | null>(null);
   const accessToken = ref<string | null>(null);
   const refreshToken = ref<string | null>(null);
@@ -27,31 +29,36 @@ export const useAuthStore = defineStore("auth", () => {
     user.value = null;
     accessToken.value = null;
     refreshToken.value = null;
-    navigateTo("/login");
+    navigateTo("/sign-in");
   }
 
-  async function login(credentials: ILoginCredentials): Promise<IAuthResponse> {
+  async function signIn(
+    credentials: ISignInCredentials,
+  ): Promise<Response<ISignInResponse>> {
     const config = useRuntimeConfig();
     try {
-      // Use raw axios to avoid circular dependency with useApi
-      const response = await axios.post<IAuthResponse>(
-        `${config.public.apiBase}/auth/login`,
+      const response = await api.post<ISignInResponse>(
+        `${config.public.apiBase}/auth/sign-in`,
         credentials,
       );
 
-      const { access_token, refresh_token, user: userData } = response.data;
+      console.log("[AuthStore] Sign in response:", response.data);
+      const {
+        access_token,
+        refresh_token,
+        user: userData,
+      } = response.data.data;
 
       setTokens(access_token, refresh_token);
       setUser(userData);
 
       return response.data;
     } catch (error) {
-      console.error("[AuthStore] Login failed:", error);
+      console.error("[AuthStore] Sign in failed:", error);
       throw error;
     }
   }
 
-  // Helper action if we need to manually refresh tokens (e.g. on app init if we only have refresh token)
   async function refresh(): Promise<void> {
     const config = useRuntimeConfig();
     if (!refreshToken.value) {
@@ -80,7 +87,7 @@ export const useAuthStore = defineStore("auth", () => {
     accessToken,
     refreshToken,
     isLoggedIn,
-    login,
+    signIn,
     logout,
     refresh,
     setTokens,

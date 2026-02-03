@@ -9,7 +9,7 @@ const (
 	// SYSTEM -> 0 - 999
 	Ok              Code = 200
 	InternalError   Code = 500
-	InvalidParams   Code = 400
+	InvalidRequest  Code = 400
 	TooManyRequests Code = 429
 
 	// USER -> 1000 - 1999
@@ -32,7 +32,7 @@ func (c Code) HTTPStatus() int {
 		return http.StatusTooManyRequests
 	case InternalError:
 		return http.StatusInternalServerError
-	case InvalidParams, UserAlreadyExists, UserPasswordWrong:
+	case InvalidRequest, UserAlreadyExists, UserPasswordWrong:
 		return http.StatusBadRequest
 	case UserNotFound:
 		return http.StatusNotFound
@@ -52,8 +52,8 @@ func (c Code) String() string {
 		return "Too many requests. Please try again later."
 	case InternalError:
 		return "Internal server error"
-	case InvalidParams:
-		return "Invalid parameters or input"
+	case InvalidRequest:
+		return "Invalid request"
 
 	// USER
 	case UserNotFound:

@@ -2,7 +2,7 @@ export default defineNuxtRouteMiddleware((to) => {
   const authStore = useAuthStore();
 
   // Define public routes that don't require authentication
-  const publicRoutes = ["/auth/login"];
+  const publicRoutes = ["/auth/sign-in"];
 
   // If the user is logged in
   if (authStore.isLoggedIn) {
@@ -13,7 +13,7 @@ export default defineNuxtRouteMiddleware((to) => {
   } else {
     // If the user is NOT logged in and trying to access a protected route
     if (!publicRoutes.includes(to.path)) {
-      return navigateTo("/auth/login");
+      return navigateTo("/auth/sign-in");
     }
   }
 });
