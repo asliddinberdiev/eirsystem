@@ -31,5 +31,5 @@ func (r *userRepo) GetAll() ([]model.User, error) {
 
 func (r *userRepo) GetByUsername(username string) (model.User, error) {
 	var user model.User
-	return user, r.db.Where("username = ?", username).First(&user).Error
+	return user, r.db.Where("username = ?", username).Take(&user).Error
 }

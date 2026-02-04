@@ -10,8 +10,9 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBase:
-        process.env.NUXT_PUBLIC_API_BASE || "http://localhost:8080/api/v1",
+      apiBase: process.env.NUXT_PUBLIC_API_BASE,
+      accessExp: parseInt(process.env.NUXT_PUBLIC_ACCESS_EXP || "15"),
+      refreshExp: parseInt(process.env.NUXT_PUBLIC_REFRESH_EXP || "10080"),
     },
   },
 

@@ -10,9 +10,32 @@ import type { Response } from "@/types/api";
 
 export const useAuthStore = defineStore("auth", () => {
   const api = useApi();
-  const user = ref<IUser | null>(null);
-  const accessToken = ref<string | null>(null);
-  const refreshToken = ref<string | null>(null);
+  const config = useRuntimeConfig();
+
+  const accessMaxAge = config.public.accessExp * 60;
+  const refreshMaxAge = config.public.refreshExp * 60;
+
+  const cookieOptions = {
+    watch: true,
+    path: "/",
+    sameSite: "lax" as const,
+    // secure: true,
+  };
+
+  const accessToken = useCookie<string | null>("access_token", {
+    ...cookieOptions,
+    maxAge: accessMaxAge,
+  });
+
+  const refreshToken = useCookie<string | null>("refresh_token", {
+    ...cookieOptions,
+    maxAge: refreshMaxAge,
+  });
+
+  const user = useCookie<IUser | null>("user_data", {
+    ...cookieOptions,
+    maxAge: refreshMaxAge,
+  });
 
   const isLoggedIn = computed(() => !!accessToken.value);
 
@@ -32,9 +55,7 @@ export const useAuthStore = defineStore("auth", () => {
     navigateTo("/sign-in");
   }
 
-  async function signIn(
-    credentials: ISignInCredentials,
-  ): Promise<Response<ISignInResponse>> {
+  async function signIn(credentials: ISignInCredentials): Promise<Response<ISignInResponse>> {
     const config = useRuntimeConfig();
     try {
       const response = await api.post<Response<ISignInResponse>>(

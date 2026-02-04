@@ -1,8 +1,12 @@
+// Package v1 - HTTP v1 delivery layer
 package v1
 
 import (
+	"errors"
+
 	"github.com/asliddinberdiev/eirsystem/internal/dto"
 	"github.com/asliddinberdiev/eirsystem/pkg/codes"
+	"github.com/asliddinberdiev/eirsystem/pkg/hasher"
 	"github.com/asliddinberdiev/eirsystem/pkg/response"
 	"github.com/gin-gonic/gin"
 )
@@ -39,7 +43,12 @@ func (h *Handler) SignIn(c *gin.Context) {
 
 	user, err := h.svc.User.GetByUsername(req.Username)
 	if err != nil {
-		response.Error(c, h.log, codes.UserNotFound, err)
+		response.Error(c, h.log, codes.AuthInvalidCredentials, errors.New("username or password is incorrect"))
+		return
+	}
+
+	if err := hasher.Verify(req.Password, user.PasswordHash); err != nil {
+		response.Error(c, h.log, codes.AuthInvalidCredentials, errors.New("username or password is incorrect"))
 		return
 	}
 

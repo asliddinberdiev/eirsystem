@@ -1,7 +1,9 @@
 // Package codes - Response codes
 package codes
 
-import "net/http"
+import (
+	"net/http"
+)
 
 type Code int
 
@@ -19,9 +21,13 @@ const (
 	UserInactive      Code = 1004
 
 	// AUTH -> 2000 - 2999
-	AuthTokenExpired Code = 2001
-	AuthTokenInvalid Code = 2002
-	AuthRequired     Code = 2003
+	AuthTokenExpired       Code = 2001
+	AuthTokenInvalid       Code = 2002
+	AuthRequired           Code = 2003
+	AuthInvalidCredentials Code = 2004
+	UserBlocked            Code = 2005
+	SessionRevoked         Code = 2006
+	SessionMismatch        Code = 2007
 )
 
 func (c Code) HTTPStatus() int {
@@ -36,7 +42,7 @@ func (c Code) HTTPStatus() int {
 		return http.StatusBadRequest
 	case UserNotFound:
 		return http.StatusNotFound
-	case AuthTokenExpired, AuthTokenInvalid, AuthRequired:
+	case AuthTokenExpired, AuthTokenInvalid, AuthRequired, AuthInvalidCredentials, UserBlocked, SessionRevoked, SessionMismatch:
 		return http.StatusUnauthorized
 	default:
 		return http.StatusInternalServerError
@@ -72,7 +78,14 @@ func (c Code) String() string {
 		return "Invalid access token"
 	case AuthRequired:
 		return "Authorization is required"
-
+	case AuthInvalidCredentials:
+		return "Invalid credentials"
+	case UserBlocked:
+		return "User is blocked"
+	case SessionRevoked:
+		return "Session revoked"
+	case SessionMismatch:
+		return "Session mismatch"
 	default:
 		return "Unknown error"
 	}
