@@ -5,6 +5,7 @@ import (
 	"github.com/asliddinberdiev/eirsystem/config"
 	_ "github.com/asliddinberdiev/eirsystem/docs"
 	"github.com/asliddinberdiev/eirsystem/internal/service"
+	"github.com/asliddinberdiev/eirsystem/pkg/jwt"
 	"github.com/asliddinberdiev/eirsystem/pkg/logger"
 	"github.com/asliddinberdiev/eirsystem/pkg/validator"
 	"github.com/gin-contrib/gzip"
@@ -17,6 +18,7 @@ type Handler struct {
 	cfg   *config.Config
 	log   logger.Logger
 	valid validator.Validator
+	jwt   *jwt.Manager
 	svc   *service.Service
 }
 
@@ -29,11 +31,16 @@ type Handler struct {
 // @host localhost:8080
 // @BasePath /api/v1
 
-func NewHandler(cfg *config.Config, log logger.Logger, valid validator.Validator, svc *service.Service) *Handler {
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+
+func NewHandler(cfg *config.Config, log logger.Logger, valid validator.Validator, jwt *jwt.Manager, svc *service.Service) *Handler {
 	return &Handler{
 		cfg:   cfg,
 		log:   log,
 		valid: valid,
+		jwt:   jwt,
 		svc:   svc,
 	}
 }

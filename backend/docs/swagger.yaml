@@ -1,6 +1,13 @@
 basePath: /api/v1
 definitions:
-  github_com_asliddinberdiev_eirsystem_internal_dto.SignInRequest:
+  RefreshTokenRequest:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+  SignInRequest:
     properties:
       password:
         minLength: 6
@@ -34,18 +41,59 @@ info:
   title: EIR System API
   version: v1
 paths:
+  /auth/logout:
+    post:
+      description: Tizimdan chiqish (Sessiyani o'chirish)
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Logout
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Access tokenni yangilash
+      parameters:
+      - description: Refresh Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Response'
+      security:
+      - BearerAuth: []
+      summary: Refresh Token
+      tags:
+      - auth
   /auth/sign-in:
     post:
       consumes:
       - application/json
-      description: SignIn
+      description: Foydalanuvchi tizimga kirishi va token olishi
       parameters:
       - description: SignIn Request
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_asliddinberdiev_eirsystem_internal_dto.SignInRequest'
+          $ref: '#/definitions/SignInRequest'
       produces:
       - application/json
       responses:
@@ -80,7 +128,14 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/Response'
+      security:
+      - BearerAuth: []
       summary: Get users
       tags:
       - users
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

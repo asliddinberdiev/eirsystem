@@ -21,13 +21,14 @@ const (
 	UserInactive      Code = 1004
 
 	// AUTH -> 2000 - 2999
-	AuthTokenExpired       Code = 2001
-	AuthTokenInvalid       Code = 2002
-	AuthRequired           Code = 2003
-	AuthInvalidCredentials Code = 2004
-	UserBlocked            Code = 2005
-	SessionRevoked         Code = 2006
-	SessionMismatch        Code = 2007
+	AuthTokenExpired        Code = 2001
+	AuthTokenInvalid        Code = 2002
+	AuthRequired            Code = 2003
+	AuthInvalidCredentials  Code = 2004
+	UserBlocked             Code = 2005
+	SessionRevoked          Code = 2006
+	SessionMismatch         Code = 2007
+	AuthAccessTokenRequired Code = 2008
 )
 
 func (c Code) HTTPStatus() int {
@@ -38,7 +39,7 @@ func (c Code) HTTPStatus() int {
 		return http.StatusTooManyRequests
 	case InternalError:
 		return http.StatusInternalServerError
-	case InvalidRequest, UserAlreadyExists, UserPasswordWrong:
+	case InvalidRequest, UserAlreadyExists, UserPasswordWrong, AuthAccessTokenRequired:
 		return http.StatusBadRequest
 	case UserNotFound:
 		return http.StatusNotFound
@@ -86,6 +87,8 @@ func (c Code) String() string {
 		return "Session revoked"
 	case SessionMismatch:
 		return "Session mismatch"
+	case AuthAccessTokenRequired:
+		return "Authorization header required"
 	default:
 		return "Unknown error"
 	}

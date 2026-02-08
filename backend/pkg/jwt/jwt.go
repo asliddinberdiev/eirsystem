@@ -225,3 +225,17 @@ func (m *Manager) getSessionKey(userID, sessionID string) string {
 func (m *Manager) getBlockKey(userID string) string {
 	return "user:blocked:" + userID
 }
+
+func (m *Manager) ParseTokenUnverified(tokenStr string) (*CustomClaims, error) {
+	token, _, err := new(jwt.Parser).ParseUnverified(tokenStr, &CustomClaims{})
+	if err != nil {
+		return nil, err
+	}
+
+	claims, ok := token.Claims.(*CustomClaims)
+	if !ok {
+		return nil, fmt.Errorf("invalid token claims")
+	}
+
+	return claims, nil
+}

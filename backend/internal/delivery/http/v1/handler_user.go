@@ -23,6 +23,7 @@ func (h *Handler) initUserRoutes(api *gin.RouterGroup) {
 // @Response 200 {object} response.Response
 // @Failure 500 {object} response.Response
 // @Router /users [get]
+// @Security BearerAuth
 func (h *Handler) GetAll(c *gin.Context) {
 	users, err := h.svc.User.GetAll()
 	if err != nil {

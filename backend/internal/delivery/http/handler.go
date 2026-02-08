@@ -6,6 +6,7 @@ import (
 	"github.com/asliddinberdiev/eirsystem/internal/delivery/http/middleware"
 	v1 "github.com/asliddinberdiev/eirsystem/internal/delivery/http/v1"
 	"github.com/asliddinberdiev/eirsystem/internal/service"
+	"github.com/asliddinberdiev/eirsystem/pkg/jwt"
 	"github.com/asliddinberdiev/eirsystem/pkg/logger"
 	"github.com/asliddinberdiev/eirsystem/pkg/validator"
 	"github.com/gin-contrib/cors"
@@ -17,6 +18,7 @@ type Handler struct {
 	cfg         *config.Config
 	log         logger.Logger
 	valid       validator.Validator
+	jwtManager  *jwt.Manager
 	redisClient *redis.Client
 	svc         *service.Service
 }
@@ -26,6 +28,7 @@ func New(cfg *config.Config, log logger.Logger, redisClient *redis.Client, svc *
 		cfg:         cfg,
 		log:         log,
 		valid:       validator.New(),
+		jwtManager:  jwt.New(&cfg.JWT, redisClient),
 		redisClient: redisClient,
 		svc:         svc,
 	}
@@ -50,7 +53,7 @@ func (h *Handler) InitRouter() *gin.Engine {
 }
 
 func (h *Handler) initAPI(router *gin.Engine) {
-	handlerV1 := v1.NewHandler(h.cfg, h.log, h.valid, h.svc)
+	handlerV1 := v1.NewHandler(h.cfg, h.log, h.valid, h.jwtManager, h.svc)
 
 	api := router.Group("/api")
 	{
