@@ -10,6 +10,7 @@ import (
 
 type User interface {
 	GetAll() ([]model.User, error)
+	GetByID(id string) (model.User, error)
 	GetByUsername(username string) (model.User, error)
 }
 
@@ -31,6 +32,10 @@ func NewUserService(cfg *config.Config, logger logger.Logger, s3 *minio.Client, 
 
 func (s *userServ) GetAll() ([]model.User, error) {
 	return s.repo.User.GetAll()
+}
+
+func (s *userServ) GetByID(id string) (model.User, error) {
+	return s.repo.User.GetByID(id)
 }
 
 func (s *userServ) GetByUsername(username string) (model.User, error) {

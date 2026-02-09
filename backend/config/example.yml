@@ -16,7 +16,7 @@ app:
   docs_username: "docs_user"
   docs_password: "docs_password"
 
-seed_super_admin:
+seed_system_admin:
   full_name: "Example Admin"
   username: "admin"
   password: "admin123"

@@ -10,6 +10,7 @@ import (
 
 type User interface {
 	GetAll() ([]model.User, error)
+	GetByID(id string) (model.User, error)
 	GetByUsername(username string) (model.User, error)
 }
 
@@ -27,6 +28,11 @@ func NewUserRepository(cfg *config.Config, logger logger.Logger, db *gorm.DB, rd
 func (r *userRepo) GetAll() ([]model.User, error) {
 	var users []model.User
 	return users, r.db.Find(&users).Error
+}
+
+func (r *userRepo) GetByID(id string) (model.User, error) {
+	var user model.User
+	return user, r.db.Where("id = ?", id).Take(&user).Error
 }
 
 func (r *userRepo) GetByUsername(username string) (model.User, error) {

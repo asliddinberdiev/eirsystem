@@ -9,6 +9,7 @@ import (
 	"github.com/asliddinberdiev/eirsystem/internal/repository"
 	"github.com/asliddinberdiev/eirsystem/internal/server"
 	"github.com/asliddinberdiev/eirsystem/internal/service"
+	"github.com/asliddinberdiev/eirsystem/pkg/casbin"
 	"github.com/asliddinberdiev/eirsystem/pkg/logger"
 	"github.com/asliddinberdiev/eirsystem/pkg/minio"
 	"github.com/asliddinberdiev/eirsystem/pkg/postgres"
@@ -64,8 +65,20 @@ func New() {
 	}
 	appLog.Info("Database migrations applied")
 
-	if err := seed.SeedSuperAdmin(log.Named("SEED"), gormPsql, cfg.SeedSuperAdmin); err != nil {
-		failOnError("Super Admin seeding failed", err)
+	enforcer, err := casbin.InitEnforcer(gormPsql, "config/rbac_model.conf")
+	if err != nil {
+		failOnError("Casbin init error", err)
+	}
+	appLog.Info("Casbin Enforcer initialized")
+
+	if err := seed.SeedSystemAdmin(log.Named("SEED"), gormPsql, cfg.SeedSystemAdmin); err != nil {
+		failOnError("System Admin seeding failed", err)
+	}
+
+	if cfg.App.IsDev() {
+		if err := seed.SeedTestUsers(log.Named("SEED_TEST"), gormPsql, enforcer); err != nil {
+			failOnError("Test users seeding failed", err)
+		}
 	}
 
 	redisClient, err := redis.New(&cfg.Redis)
@@ -82,9 +95,9 @@ func New() {
 	appLog.Info("Connected to minio")
 
 	repository := repository.New(cfg, log.Named("REPOSITORY"), gormPsql, redisClient)
-	service := service.New(cfg, log.Named("SERVICE"), minioClient, repository)
+	service := service.New(cfg, log.Named("SERVICE"), minioClient, repository, enforcer)
 
-	h := httpDelivery.New(cfg, log.Named("HTTP"), redisClient.Client, service)
+	h := httpDelivery.New(cfg, log.Named("HTTP"), redisClient.Client, service, enforcer)
 	srv := server.New(&cfg.App, log.Named("SERVER"), h.InitRouter())
 
 	if err := srv.Run(); err != nil {

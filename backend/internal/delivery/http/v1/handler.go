@@ -4,10 +4,12 @@ package v1
 import (
 	"github.com/asliddinberdiev/eirsystem/config"
 	_ "github.com/asliddinberdiev/eirsystem/docs"
+	"github.com/asliddinberdiev/eirsystem/internal/delivery/http/middleware"
 	"github.com/asliddinberdiev/eirsystem/internal/service"
 	"github.com/asliddinberdiev/eirsystem/pkg/jwt"
 	"github.com/asliddinberdiev/eirsystem/pkg/logger"
 	"github.com/asliddinberdiev/eirsystem/pkg/validator"
+	"github.com/casbin/casbin/v3"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -15,11 +17,12 @@ import (
 )
 
 type Handler struct {
-	cfg   *config.Config
-	log   logger.Logger
-	valid validator.Validator
-	jwt   *jwt.Manager
-	svc   *service.Service
+	cfg      *config.Config
+	log      logger.Logger
+	valid    validator.Validator
+	jwt      *jwt.Manager
+	svc      *service.Service
+	enforcer *casbin.Enforcer
 }
 
 // @title EIR System API
@@ -35,13 +38,14 @@ type Handler struct {
 // @in header
 // @name Authorization
 
-func NewHandler(cfg *config.Config, log logger.Logger, valid validator.Validator, jwt *jwt.Manager, svc *service.Service) *Handler {
+func NewHandler(cfg *config.Config, log logger.Logger, valid validator.Validator, jwt *jwt.Manager, svc *service.Service, enforcer *casbin.Enforcer) *Handler {
 	return &Handler{
-		cfg:   cfg,
-		log:   log,
-		valid: valid,
-		jwt:   jwt,
-		svc:   svc,
+		cfg:      cfg,
+		log:      log,
+		valid:    valid,
+		jwt:      jwt,
+		svc:      svc,
+		enforcer: enforcer,
 	}
 }
 
@@ -57,7 +61,16 @@ func (h *Handler) Init(api *gin.RouterGroup) {
 	}
 
 	{
-		h.initAuthRoutes(v1)
-		h.initUserRoutes(v1)
+		{
+			h.initAuthRoutes(v1)
+
+			protected := v1.Group("")
+			protected.Use(middleware.NewJWTMiddleware(h.log, h.jwt, h.svc))
+			protected.Use(middleware.Authorizer(h.log.Named("MIDDLEWARE"), h.enforcer))
+			{
+				h.initUserRoutes(protected)
+				h.initTestRoutes(protected)
+			}
+		}
 	}
 }

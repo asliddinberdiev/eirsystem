@@ -10,27 +10,27 @@ import (
 	"gorm.io/gorm"
 )
 
-func SeedSuperAdmin(log logger.Logger, db *gorm.DB, cfg config.SeedSuperAdmin) error {
-	log.Info("Seeding Super Admin...", logger.Any("config", cfg))
+func SeedSystemAdmin(log logger.Logger, db *gorm.DB, cfg config.SeedSystemAdmin) error {
+	log.Info("Seeding System Admin...", logger.Any("config", cfg))
 	if cfg.Username == "" || cfg.Password == "" {
-		log.Warn("Super Admin username/password is empty. Seeding skipped.")
+		log.Warn("System Admin username/password is empty. Seeding skipped.")
 		return nil
 	}
 
 	var exists bool
 
-	checkSQL := `SELECT EXISTS(SELECT 1 FROM users WHERE role = 'super_admin')`
+	checkSQL := `SELECT EXISTS(SELECT 1 FROM users WHERE role = 'system')`
 
 	if err := db.Raw(checkSQL).Scan(&exists).Error; err != nil {
 		return fmt.Errorf("error checking admin: %w", err)
 	}
 
 	if exists {
-		log.Info("Super Admin already exists. Skipping seeding.")
+		log.Info("System Admin already exists. Skipping seeding.")
 		return nil
 	}
 
-	log.Info("Super Admin not found. Creating...")
+	log.Info("System Admin not found. Creating...")
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(cfg.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -39,13 +39,13 @@ func SeedSuperAdmin(log logger.Logger, db *gorm.DB, cfg config.SeedSuperAdmin) e
 
 	insertSQL := `
 		INSERT INTO users (tenant_id, full_name, username, password_hash, role, phone, is_active)
-		VALUES (NULL, ?, ?, ?, 'super_admin', ?, TRUE)
+		VALUES (NULL, ?, ?, ?, 'system', ?, TRUE)
 	`
 
 	if err := db.Exec(insertSQL, cfg.FullName, cfg.Username, string(hashedPassword), cfg.Phone).Error; err != nil {
 		return fmt.Errorf("error saving admin: %w", err)
 	}
 
-	log.Info("Super Admin successfully created!", logger.String("username", cfg.Username))
+	log.Info("System Admin successfully created!", logger.String("username", cfg.Username))
 	return nil
 }

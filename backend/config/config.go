@@ -12,7 +12,7 @@ import (
 
 type Config struct {
 	App            App            `mapstructure:"app"`
-	SeedSuperAdmin SeedSuperAdmin `mapstructure:"seed_super_admin"`
+	SeedSystemAdmin SeedSystemAdmin `mapstructure:"seed_system_admin"`
 	Logger         Logger         `mapstructure:"logger"`
 	JWT            JWT            `mapstructure:"jwt"`
 	Postgres       Postgres       `mapstructure:"postgres"`
@@ -47,7 +47,7 @@ func (a *App) IsDev() bool {
 	return a.Env == "development"
 }
 
-type SeedSuperAdmin struct {
+type SeedSystemAdmin struct {
 	FullName string `mapstructure:"full_name"`
 	Username string `mapstructure:"username"`
 	Password string `mapstructure:"password"`
